@@ -1,6 +1,12 @@
 # DPA-Site version 0.1a
 
-## DPA-Site software to perform dynamics perturbation analysis, as described in the following publications:
+Use the code in this repository to perform Fast Dynamics Perturbation Analysis (Fast DPA) for prediction of functional sites in proteins.
+
+From the abstract of the 2008 paper:
+
+>*The original DPA algorithm finds regions in proteins where interactions cause a large change in the protein conformational distribution, as measured using the relative entropy D_$x$. Such regions are associated with functional sites. The Fast DPA algorithm, which accelerates DPA calculations, is motivated by an empirical observation that Dx in a normal-modes model is highly correlated with an entropic term that only depends on the eigenvalues of the normal modes. The eigenvalues are accurately estimated using first-order perturbation theory, resulting in a N-fold reduction in the overall computational requirements of the algorithm, where N is the number of residues in the protein.*
+
+## Main publications:
 
 - Ming D, Wall ME. Quantifying allosteric effects in proteins. Proteins. 2005 Jun 1;59(4):697-707. doi: 10.1002/prot.20440. PMID: 15822100.
 
