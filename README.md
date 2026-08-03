@@ -1,4 +1,4 @@
-#DPA-Site version 0.1a
+# DPA-Site version 0.1a
 
 DPA-Site software to perform dynamics perturbation analysis, as described in the following publications:
 
@@ -18,7 +18,7 @@ This software is made freely available under an MIT license (see LICENSE file)
 
 See QUICK_REFERENCE.txt for some information about how to get started
 
-#Authors
+# Authors
 
 - Dengming Ming
 - Michael Wall
