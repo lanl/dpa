@@ -1,0 +1,6 @@
+_*
+bin/*
+structuredata/*
+dpadata/*
+scratch/*
+*.md

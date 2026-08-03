@@ -1,0 +1,78 @@
+DPA QUICK REFERENCE
+===================
+
+Set up dpa_fortran python environment
+
+  micromamba create -f environment.yml
+
+Build script for fortran code
+
+  bash build.sh
+
+Run example 
+  
+  cd example
+  bash run.sh
+
+More details
+============
+
+Fetch .pdb files into structuredata/ directory:
+
+  curl -o ${DPA_HOME}/structuredata/${PDB_ID}_raw.pdb https://files.rcsb.org/download/${PDB_ID}.pdb
+
+Get non-HOH HETATM records:
+
+  grep -e HETATM ${DPA_HOME}/structuredata/${PDB_ID}_raw.pdb | grep -v HOH > ${DPA_HOME}/structuredata/ligand_${PDB_ID}.pdb
+
+Strip HETATM records prior to analysis
+
+  awk '/^ATOM/' ${DPA_HOME}/structuredata/${PDB_ID}_raw.pdb > ${DPA_HOME}/structuredata/${PDB_ID}.pdb
+
+Generate surface points:
+
+  python generate_surface_points.py input.pdb output.surf
+
+Calculate DPA values for surface points:
+
+  perl ../src/ggdpa.pl -f pdb_list.txt
+
+Basic Run:
+  perl dpa.pl -p <pdbid> -topp 0.98 -cutoff 6 6
+
+Output All Surface Points with DPA Scores:
+  perl dpa.pl -p <pdbid> -topp 0.98 -cutoff 6 6 -walldpa
+  → Creates scratch/<pdbid>_alldpa.pdb with ALL points & scores
+
+Output Top-Scoring Clusters:
+  perl dpa.pl -p <pdbid> -topp 0.98 -cutoff 6 6 -wcpdb
+  → Creates scratch/<pdbid>_topdpacluster.pdb with top 4% points
+
+Both Together:
+  perl dpa.pl -p <pdbid> -topp 0.98 -cutoff 6 6 -walldpa -wcpdb
+
+Extract Results:
+  perl extract_dpa_results.pl <pdbid>
+
+Result Files:
+  _ana.res3       - Residue lists for each binding site
+  _ana.res        - EVD parameters and summary statistics
+  scratch/<pdbid>_alldpa.pdb          - All surface points with DPA scores
+  scratch/<pdbid>_topdpacluster.pdb   - Top-scoring clustered points
+
+DPA Scores:
+  - Stored in B-factor (temperature factor) column of PDB files
+  - Higher score = stronger predicted binding site
+  - Typical range: ~10-150 (varies by protein)
+
+Common Parameters:
+  -topp 0.98      Percentile threshold (98th = top 2%)
+  -cutoff 6 6     CA distance cutoffs (Angstroms) for ligand and DPA binding
+  -walldpa        Write all surface points to PDB
+  -wcpdb          Write clustered top points to PDB
+  -showfit        Show EVD fitting details
+
+PyMOL Visualization:
+  load scratch/1abe_alldpa.pdb
+  spectrum b, rainbow, 1abe_alldpa
+  set sphere_scale, 0.3

@@ -1,0 +1,12 @@
+name: dpa-fortran
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - gfortran
+  - openblas
+  - lapack
+  - arpack
+  - cminpack
+  - make
