@@ -1,4 +1,5 @@
 # DPA-Site version 0.1a
+Los Alamos Laboratory O\# (O5169)
 
 Use the code in this repository to perform Fast Dynamics Perturbation Analysis (Fast DPA) for prediction of functional sites in proteins.
 
