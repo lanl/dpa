@@ -1,5 +1,5 @@
 export DPA_HOME=${PWD}/..
-export PDB_ID=4wor
+export PDB_ID=1jef
 
 curl -o ${DPA_HOME}/structuredata/${PDB_ID}_raw.pdb https://files.rcsb.org/download/${PDB_ID}.pdb
 
