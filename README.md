@@ -20,9 +20,13 @@ From the abstract of the 2008 paper:
 
 - Verspoor KM, Cohn JD, Ravikumar KE, Wall ME. Text mining improves prediction of protein functional sites. PLoS One. 2012;7(2):e32171. doi: 10.1371/journal.pone.0032171. Epub 2012 Feb 29. PMID: 22393388; PMCID: PMC3290545.
 
-This software is made freely available under an MIT license (see LICENSE file)
+## Usage
 
 See QUICK_REFERENCE.txt for some information about how to get started
+
+## License
+
+This software is made freely available under an MIT license (see LICENSE file)
 
 ## Authors
 
