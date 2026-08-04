@@ -24,6 +24,8 @@ sub sort_chain_resid {
     } @_;
 }
 
+my @dpa_site_colors = ('orange', 'yellow', 'pink');
+
 sub pymol_resi_selection {
     my %by_chain;
     foreach my $r (@_) {
@@ -93,8 +95,8 @@ if (-e "_ana.res3") {
             print "  Count: $count\n\n";
             my $ressel = pymol_resi_selection(@res_list);
             print $pmlf "select dpa_site_${site_num}, ${pdbid}_prot and ($ressel) \n";
-            $csite=$site_num + 12;
-            print $pmlf "color $csite, dpa_site_${site_num}\n";
+            my $color = $dpa_site_colors[($site_num - 1) % scalar(@dpa_site_colors)];
+            print $pmlf "color $color, dpa_site_${site_num}\n";
             print $pmlf "show sticks, dpa_site_${site_num}\n";
         }
     }
