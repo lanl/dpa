@@ -20,6 +20,33 @@ print "=" x 70, "\n";
 print "DPA ANALYSIS RESULTS FOR $pdbid\n";
 print "=" x 70, "\n\n";
 
+open(my $pmlf, ">", "$home/scratch/${pdbid}_pymol.pml");
+
+if (-e "$home/structuredata/${pdbid}.pdb") {
+    print $pmlf "load $home/structuredata/${pdbid}.pdb,${pdbid}_prot\n";
+}
+
+if (-e "$home/structuredata/ligand_${pdbid}.pdb") {
+    print $pmlf "load $home/structuredata/ligand_${pdbid}.pdb,${pdbid}_het\n";
+    print $pmlf "hide everything,${pdbid}_het\n";
+    print $pmlf "show spheres, ${pdbid}_het\n";
+}
+if (-e "$home/sscratch/${pdbid}_topdpacluster.pdb") {
+    print $pmlf "load $home/scratch/${pdbid}_topdpacluster.pdb,${pdbid}_topdpa\n";
+    print $pmlf "hide everything,${pdbid}_topdpa\n";
+    print $pmlf "show spheres, ${pdbid}_topdpa\n";
+    print $pmlf "color magenta, ${pdbid}_topdpa\n";
+    print $pmlf "toggle everything, ${pdbid}_topdpa\n";
+}
+if (-e "$home/scratch/${pdbid}_alldpa.pdb") {
+    print $pmlf "load $home/scratch/${pdbid}_alldpa.pdb,${pdbid}_dpa\n";
+    print $pmlf "hide everything,${pdbid}_dpa\n";
+    print $pmlf "show spheres, ${pdbid}_dpa\n";
+    print $pmlf "spectrum b, rainbow, ${pdbid}_dpa\n";
+    print $pmlf "set sphere_scale, 0.3, ${pdbid}_dpa\n";
+    print $pmlf "toggle everything, ${pdbid}_dpa\n";
+}
+
 if (-e "_ana.res3") {
     open(my $fh, "<", "_ana.res3") || die "Cannot open _ana.res3: $!\n";
     print "BINDING SITE RESIDUES:\n";
@@ -30,15 +57,22 @@ if (-e "_ana.res3") {
             my ($id, $site_num, $residues) = ($1, $2, $3);
             my @res_list = split /\s+/, $residues;
             print "Ligand Binding Site $site_num (from protein-ligand contacts):\n";
-            print "  Residues: ", join(", ", @res_list), "\n";
+            print "  Residues: ", join(", ", sort { $a <=> $b } @res_list), "\n";
             print "  Count: ", scalar(@res_list), "\n\n";
+            my $ressel = join("+", sort { $a <=> $b } @res_list);
+            print $pmlf "select lig_site_${site_num}, ${pdbid}_prot and resi $ressel \n";
         }
         elsif (/DPA_BINDINGSITES>\s+(\S+)\s+--\s+(\d+)\s+--\s+(\d+)\s+--\s+(.+)$/) {
             my ($id, $site_num, $count, $residues) = ($1, $2, $3, $4);
             my @res_list = split /\s+/, $residues;
             print "DPA Predicted Site $site_num:\n";
-            print "  Residues: ", join(", ", @res_list), "\n";
+            print "  Residues: ", join(", ", sort { $a <=> $b } @res_list), "\n";
             print "  Count: $count\n\n";
+            my $ressel = join("+", sort { $a <=> $b } @res_list);
+            print $pmlf "select dpa_site_${site_num}, ${pdbid}_prot and resi $ressel \n";
+            $csite=$site_num + 12;
+            print $pmlf "color $csite, dpa_site_${site_num}\n";
+            print $pmlf "show sticks, dpa_site_${site_num}\n";
         }
     }
     close($fh);
@@ -138,5 +172,5 @@ if (-e "_ana.res") {
     }
     close($fh);
 }
-
+close($pmlf);
 print "\n", "=" x 70, "\n";
