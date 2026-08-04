@@ -49,7 +49,7 @@ foreach $pdbid ( @idlist){
     if(! -e "$structuredatadir/$pdbfile"){
 	print prcf "$pdbid -9999 --  Not detect PROTEIN PDBfile\n";
 	print "$pdbid -9999 --  Not detect PROTEIN PDBfile\n";}
-    my ($nca,$cacrd)=&read_pdb($structuredatadir,$pdbfile,$selechain,'getcacrd');
+    my ($nca,$cacrd)=&read_pdb($structuredatadir,$pdbfile,'ALL','getcacrd');
     if($nca<=5) {print prcf "$pdbid -9991 -- CACRD data error (NCA $nca) \n";
 		 print "$pdbid -9991 -- CACRD data error (NCA $nca) \n\n";next;}
 #
@@ -231,7 +231,7 @@ sub cmp_twosets{
     my $ncom=0;
     foreach my $il (@$set0){
 	foreach my $id (@$set1){
-	    if($id == $il) {   
+	    if($id eq $il) {
 		$ncom++;
 		last;
 	    }
@@ -835,7 +835,7 @@ sub read_pdb{
 
     my $atom=$serial=$atomname=$altLoc=$resName=$chainID=$chainIDw=$resSeq='';
     my $iCode=$x=$y=$z=$occupancy=$tempFactor=$segID=$element=$charge='';
-    my $resSeq0=$iCode0='null'; my $atmtype='null';
+    my $resSeq0=$iCode0=$chainID0='null'; my $atmtype='null';
     my @revisedRES=('ACE','CGU','MSE','CME','CSS','KCX','TRO','SEP',' FE','OXY');
 
     open(wcrd,"> $outputdir/$recordf") if($recordf ne '' and $recordf ne 'none');
@@ -862,12 +862,13 @@ sub read_pdb{
 	$chainIDw=$chainID; $chainIDw='0' if $chainIDw eq ' ';
 
 	if(($atom eq "ATOM  " or grep (/$resName/, @revisedRES)) and $resName ne 'ACE'  and  $atomname eq ' CA ' and ($flag_read eq 'getnca' or $flag_read eq 'getcacrd')){
-	    if($resSeq ne $resSeq0 or $iCode ne $iCode0) {
+	    if($resSeq ne $resSeq0 or $iCode ne $iCode0 or $chainID ne $chainID0) {
 		$resSeq0=$resSeq;
 		$iCode0=$iCode;
+		$chainID0=$chainID;
 		if ($selechain eq $chainID || $selechain eq 'ALL'|| $selechain eq 'all' || $selechain eq 'All'){
 		    $nca++   if($flag_read eq 'getnca' or $flag_read eq 'getcacrd');
-		    push (@{$cacrd{$nca}},$x,$y,$z,$resSeq,$tempFactor,$resName) if($flag_read eq 'getcacrd'); 
+		    push (@{$cacrd{$nca}},$x,$y,$z,$resSeq,$tempFactor,$resName,$chainIDw) if($flag_read eq 'getcacrd');
 		    print wcrd "\t$x\t$y\t$z\t$resSeq\t$tempFactor\t$chainIDw\t$resName\n" if($recordf ne '' and $recordf ne 'null');
 		}
 	    }
@@ -961,7 +962,7 @@ sub get_Ligand_contacts_Calpha{
 #	}
 #    exit();
 #########
-    my @contacts=();                    #output -- Recording residue seqres (resSeq) of contact CA
+    my @contacts=();                    #output -- Recording "chain:seqres" id of contact CA
     my @d1=();my $dtmp=''; my $dissq='';
 
     foreach my $caid (keys %$cacrd){              #For each CA searching ALL Ligand atoms
@@ -977,7 +978,9 @@ sub get_Ligand_contacts_Calpha{
 	    if($dissq<$bindingcutoffsq){          #find the contact CA
 		my $seqres=@{$$cacrd{$caid}}[3];
 		$seqres =~ s/^\s+|\s+$//g;     #substr() of fixed-width PDB field leaves padding
-		push (@contacts,$seqres);   #   print "GCTS> $bindingcutoff -- $seqres\n";
+		my $chain=@{$$cacrd{$caid}}[6];
+		my $resid="$chain:$seqres";
+		push (@contacts,$resid);   #   print "GCTS> $bindingcutoff -- $resid\n";
 		last;                     #stop search when any ligand atom found within the cutoff
 	    }
 	}
