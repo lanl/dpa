@@ -1128,7 +1128,7 @@ sub parse_arg{
     $lgbindcutoff= 6 if ($lgbindcutoff eq '');
     $dpabindingcutoff=6 if ($dpabindingcutoff eq '');
 
-    $toppercent=0.98 if $toppercent eq '';
+    $toppercent=0.96 if $toppercent eq '';
     $adjcutperct="false" if $adjcutperct eq '';
     $ndpasection=40 if $ndpasection eq '';
 
