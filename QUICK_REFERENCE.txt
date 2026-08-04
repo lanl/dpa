@@ -36,20 +36,23 @@ Generate surface points:
 Calculate DPA values for surface points:
 
   perl ../src/ggdpa.pl -f pdb_list.txt
+  perl ../src/ggdpa.pl -p <pdbid>
 
 Basic Run:
-  perl dpa.pl -p <pdbid> -topp 0.98 -cutoff 6 6
+  perl dpa.pl -p <pdbid> -topp 0.96 -cutoff 6 6
 
 Output All Surface Points with DPA Scores:
-  perl dpa.pl -p <pdbid> -topp 0.98 -cutoff 6 6 -walldpa
+  perl dpa.pl -p <pdbid> -topp 0.96 -cutoff 6 6 -walldpa
   → Creates scratch/<pdbid>_alldpa.pdb with ALL points & scores
+  perl dpa.pl -f <pdb id list> 1 1 -topp 0.96 -cutoff 6 6 -walldpa
+  → Same using a list of PDB IDs instead of a single ID
 
 Output Top-Scoring Clusters:
-  perl dpa.pl -p <pdbid> -topp 0.98 -cutoff 6 6 -wcpdb
+  perl dpa.pl -p <pdbid> -topp 0.96 -cutoff 6 6 -wcpdb
   → Creates scratch/<pdbid>_topdpacluster.pdb with top 4% points
 
 Both Together:
-  perl dpa.pl -p <pdbid> -topp 0.98 -cutoff 6 6 -walldpa -wcpdb
+  perl dpa.pl -p <pdbid> -topp 0.96 -cutoff 6 6 -walldpa -wcpdb
 
 Extract Results:
   perl extract_dpa_results.pl <pdbid>
@@ -66,7 +69,7 @@ DPA Scores:
   - Typical range: ~10-150 (varies by protein)
 
 Common Parameters:
-  -topp 0.98      Percentile threshold (98th = top 2%)
+  -topp 0.96      Percentile threshold (96th = top 4%)
   -cutoff 6 6     CA distance cutoffs (Angstroms) for ligand and DPA binding
   -walldpa        Write all surface points to PDB
   -wcpdb          Write clustered top points to PDB
