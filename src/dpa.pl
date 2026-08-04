@@ -961,7 +961,7 @@ sub get_Ligand_contacts_Calpha{
 #	}
 #    exit();
 #########
-    my @contacts=();                    #output -- Recording index in cacrd and the distance
+    my @contacts=();                    #output -- Recording residue seqres (resSeq) of contact CA
     my @d1=();my $dtmp=''; my $dissq='';
 
     foreach my $caid (keys %$cacrd){              #For each CA searching ALL Ligand atoms
@@ -975,7 +975,9 @@ sub get_Ligand_contacts_Calpha{
 	    next if($#d1 <2);                     # at least 1 of 3 components of displacement > cutoff
 	    $dissq=(@d1[0]*@d1[0]+@d1[1]*@d1[1]+@d1[2]*@d1[2]);
 	    if($dissq<$bindingcutoffsq){          #find the contact CA
-		push (@contacts,$caid);   #   print "GCTS> $bindingcutoff -- $caid\n";
+		my $seqres=@{$$cacrd{$caid}}[3];
+		$seqres =~ s/^\s+|\s+$//g;     #substr() of fixed-width PDB field leaves padding
+		push (@contacts,$seqres);   #   print "GCTS> $bindingcutoff -- $seqres\n";
 		last;                     #stop search when any ligand atom found within the cutoff
 	    }
 	}
