@@ -10,3 +10,6 @@ dependencies:
   - arpack
   - cminpack
   - make
+  - numpy
+  - biopython
+  - scipy
