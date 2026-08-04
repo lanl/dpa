@@ -14,6 +14,29 @@ if (! exists $ENV{DPA_HOME}) {
 
 my $home=$ENV{DPA_HOME};
 
+# Residue ids from dpa.pl are "chain:resSeq" tokens (e.g. "A:69") since a
+# structure's chains can share residue numbering.
+sub sort_chain_resid {
+    return sort {
+        my ($ca, $ra) = split /:/, $a, 2;
+        my ($cb, $rb) = split /:/, $b, 2;
+        $ca cmp $cb or $ra <=> $rb
+    } @_;
+}
+
+sub pymol_resi_selection {
+    my %by_chain;
+    foreach my $r (@_) {
+        my ($chain, $resid) = split /:/, $r, 2;
+        push @{$by_chain{$chain}}, $resid;
+    }
+    my @clauses;
+    foreach my $chain (sort keys %by_chain) {
+        my @resids = sort { $a <=> $b } @{$by_chain{$chain}};
+        push @clauses, "(chain $chain and resi " . join("+", @resids) . ")";
+    }
+    return join(" or ", @clauses);
+}
 
 # Read _ana.res3 for residue lists
 print "=" x 70, "\n";
@@ -57,19 +80,19 @@ if (-e "_ana.res3") {
             my ($id, $site_num, $residues) = ($1, $2, $3);
             my @res_list = split /\s+/, $residues;
             print "Ligand Binding Site $site_num (from protein-ligand contacts):\n";
-            print "  Residues: ", join(", ", sort { $a <=> $b } @res_list), "\n";
+            print "  Residues: ", join(", ", sort_chain_resid(@res_list)), "\n";
             print "  Count: ", scalar(@res_list), "\n\n";
-            my $ressel = join("+", sort { $a <=> $b } @res_list);
-            print $pmlf "select lig_site_${site_num}, ${pdbid}_prot and resi $ressel \n";
+            my $ressel = pymol_resi_selection(@res_list);
+            print $pmlf "select lig_site_${site_num}, ${pdbid}_prot and ($ressel) \n";
         }
         elsif (/DPA_BINDINGSITES>\s+(\S+)\s+--\s+(\d+)\s+--\s+(\d+)\s+--\s+(.+)$/) {
             my ($id, $site_num, $count, $residues) = ($1, $2, $3, $4);
             my @res_list = split /\s+/, $residues;
             print "DPA Predicted Site $site_num:\n";
-            print "  Residues: ", join(", ", sort { $a <=> $b } @res_list), "\n";
+            print "  Residues: ", join(", ", sort_chain_resid(@res_list)), "\n";
             print "  Count: $count\n\n";
-            my $ressel = join("+", sort { $a <=> $b } @res_list);
-            print $pmlf "select dpa_site_${site_num}, ${pdbid}_prot and resi $ressel \n";
+            my $ressel = pymol_resi_selection(@res_list);
+            print $pmlf "select dpa_site_${site_num}, ${pdbid}_prot and ($ressel) \n";
             $csite=$site_num + 12;
             print $pmlf "color $csite, dpa_site_${site_num}\n";
             print $pmlf "show sticks, dpa_site_${site_num}\n";
