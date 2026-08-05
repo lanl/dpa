@@ -98,6 +98,7 @@ if (-e "_ana.res3") {
             my $color = $dpa_site_colors[($site_num - 1) % scalar(@dpa_site_colors)];
             print $pmlf "color $color, dpa_site_${site_num}\n";
             print $pmlf "show sticks, dpa_site_${site_num}\n";
+            print $pmlf "disable dpa_site_${site_num}\n";
         }
     }
     close($fh);

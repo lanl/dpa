@@ -43,6 +43,7 @@ else{
 my $Nlgclutt=$Ndpaclutt=$Npredtt=0;
 
 foreach $pdbid ( @idlist){
+    my $nolig_this=$nolig;    #per-structure copy; don't let one bad ligand disable the rest of a batch
     my $pdbfile=$pdbid.".pdb";my $ligandf="ligand_".$pdbid.".pdb";
 #
 #-- C_alpha DATA
@@ -54,11 +55,11 @@ foreach $pdbid ( @idlist){
 		 print "$pdbid -9991 -- CACRD data error (NCA $nca) \n\n";next;}
 #
   if (! -e "$structuredatadir/$ligandf"){
-    $nolig = "true";
+    $nolig_this = "true";
     print "Ligand file not found, skipping protein-ligand analysis\n";
   }
   my $num_plg_clu,$plg_bindingsites,$plg_lgcrd;
-  if ($nolig eq "true"){
+  if ($nolig_this eq "true"){
     print "Skipped protein/ligand binding analysis\n";
   } else {
 #-- Protein/Ligand binding in X-ray structure
@@ -67,17 +68,20 @@ foreach $pdbid ( @idlist){
 				 $cacrd,$ligandf,$lgbindcutoff,
 				 $lgatomnocutoff,$lgcntatomnocutoff);
     my $calc_info=$num_plg_clu; my $infocalc=$plg_bindingsites;
-    if($calc_info < 0) {print prcf "$pdbid $calc_info -- $infocalc\n";
-			print "$pdbid $calc_info -- $infocalc\n\n";next;}
-
-    foreach my $plgcid (sort {$a<=>$b} keys %{$plg_bindingsites}){
-	print rcdf3 "PLG_BINDINGSITES> $pdbid --- $plgcid -- @{$$plg_bindingsites{$plgcid}}\n";
-#	foreach my $lgcrdid (sort {$a<=>$b} keys %{$$plg_lgcrd{$plgcid}}){
-#	    print "PLG_LGCTRS> $pdbid--$plgcid--$lgcrdid--@{$$plg_lgcrd{$plgcid}{$lgcrdid}} \n";
+    if($calc_info < 0) {
+	print prcf "$pdbid $calc_info -- $infocalc\n";
+	print "$pdbid $calc_info -- $infocalc\n\n";
+	$nolig_this="true";    #ligand unusable (too small/no contacts) -- still run DPA
+    } else {
+	foreach my $plgcid (sort {$a<=>$b} keys %{$plg_bindingsites}){
+	    print rcdf3 "PLG_BINDINGSITES> $pdbid --- $plgcid -- @{$$plg_bindingsites{$plgcid}}\n";
+#	    foreach my $lgcrdid (sort {$a<=>$b} keys %{$$plg_lgcrd{$plgcid}}){
+#		print "PLG_LGCTRS> $pdbid--$plgcid--$lgcrdid--@{$$plg_lgcrd{$plgcid}{$lgcrdid}} \n";
+	}
     }
 #    print "\n"; exit();
 #
-  } 
+  }
 #-- DPA binding sites prediction
 my $dpaf=$pdbid.'.dpa';
     if(!-e "$dpadatadir/$dpaf"){
@@ -107,7 +111,7 @@ my $dpaf=$pdbid.'.dpa';
 #
     my $nlgclu,$ndpaclu,$npred,$cmpbindingsites,
 	$nullpp,$nullpp2,$ncompp,$prank;
-  if ($nolig eq "true"){
+  if ($nolig_this eq "true"){
     print "Skipping protein-ligand comparison\n";
   } else {
 #-- Comparize DPA with X-Ray P/L interactions
@@ -473,6 +477,20 @@ sub get_pdbligand_bindsites{
     my $ligandclusterpdbf='';
     $ligandclusterpdbf=$jobid.'_ligandcluster.pdb' if ($flag_wclusterpdb == 1);
     my $lgcluster=OPTICS($lgcrd,5,2,5,$ligandclusterpdbf);
+
+#-- Isolated ligand atoms (e.g. lone metal ions with no other ligand
+#-- atom within OPTICS' epsilon) land in the noise cluster (id 0),
+#-- which getbindingdata_with_ClusterPOINTS always skips. Promote each
+#-- to its own single-atom cluster so it still gets contact-checked.
+    if (exists $$lgcluster{0}){
+	my $maxcid=0;
+	foreach my $cid (keys %$lgcluster){ $maxcid=$cid if $cid>$maxcid; }
+	foreach my $pid (@{$$lgcluster{0}}){
+	    $maxcid++;
+	    push(@{$$lgcluster{$maxcid}},$pid);
+	}
+	delete $$lgcluster{0};
+    }
 
 #    foreach (sort {$a<=$b} keys %$lgcluster){
 #	print "LIGAND_CLU> $jobid -- $_ --  @{$$lgcluster{$_}}\n";}    exit();
@@ -1128,8 +1146,8 @@ sub parse_arg{
     $epislon_dpa=6;
     $MinPts_dpa=3;
     $epislon_cluster_dpa=6;
-    $lgatomnocutoff=1;    #ignor ligands with smaller atom numbers
-    $lgcntatomnocutoff=1;
+    $lgatomnocutoff=1 if $lgatomnocutoff eq '';    #ignor ligands with smaller atom numbers
+    $lgcntatomnocutoff=1 if $lgcntatomnocutoff eq '';
     $lgbindcutoff= 6 if ($lgbindcutoff eq '');
     $dpabindingcutoff=6 if ($dpabindingcutoff eq '');
 
