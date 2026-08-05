@@ -61,12 +61,12 @@ c
      &       file_cacrd,file_surfp,file_dpa,nca,nsurf,cutcc,cutlg,
      &       cutll,wcc,wctc,wlg,wll,time1,time2)
 	implicit none
-	character*100 infocalc,file_cacrd,file_surfp,file_dpa
-	integer   calc_info,nca,nsurf,nca3,ndimca,ndimhet,i,k
+	character*100 infocalc,file_cacrd,file_surfp,file_dpa,infocalc_i
+	integer   calc_info,nca,nsurf,nca3,ndimca,ndimhet,i,k,calc_info_i
 	INTEGER   nat0,nat30,nhet,nhet3,one
 	PARAMETER (nat0=1200,nat30=3*nat0,nhet=1,nhet3=3*nhet,one=1)
 	real*8    cacrd(3*nca),surfcrd(3*nsurf),hetcrd(nhet3)
-	real*8    wcc,wctc,wlg,wll,cutcc,cutlg,cutll,pert
+	real*8    wcc,wctc,wlg,wll,cutcc,cutlg,cutll,pert_all(nsurf)
 	real*8  ev_threshold,ev0(nat30),vec0(nat30*nat30)
 	common  /MODE0/ ev0,vec0
 	real      time1,time2
@@ -92,15 +92,32 @@ c
 	if(calc_info.ne.0) return
 c
 	open(20,file=file_dpa,status='unknown')
+c-- Each surface point's perturbation is independent of the others, so
+c-- this sweep parallelizes over points; only the first failure (in
+c-- whatever order threads reach it) is kept, matching the intent of
+c-- the original first-error-wins serial behavior.
+!$OMP PARALLEL DO PRIVATE(i,hetcrd,calc_info_i,infocalc_i)
 	do i=1,nsurf
 	   hetcrd(1)=surfcrd(3*i-2)
 	   hetcrd(2)=surfcrd(3*i-1)
 	   hetcrd(3)=surfcrd(3*i)
-	   call DPA_1th_perturb(calc_info,infocalc,cacrd,hetcrd,
+	   call DPA_1th_perturb(calc_info_i,infocalc_i,cacrd,hetcrd,
      &          nca+nhet,nca3,nhet3,ndimca,ndimhet,cutlg,cutll,wlg,
-     &          wll,pert)
-	   if(calc_info.ne.0) return
-	   write(20,'(1x,3F9.3,2x,F12.6,I10)') (hetcrd(k),k=1,3),pert,i
+     &          wll,pert_all(i))
+	   if(calc_info_i.ne.0) then
+!$OMP CRITICAL
+	      if(calc_info.eq.0) then
+	         calc_info=calc_info_i
+	         infocalc=infocalc_i
+	      endif
+!$OMP END CRITICAL
+	   endif
+	enddo
+!$OMP END PARALLEL DO
+	if(calc_info.ne.0) return
+	do i=1,nsurf
+	   write(20,'(1x,3F9.3,2x,F12.6,I10)') (surfcrd(3*(i-1)+k),k=1,3),
+     &          pert_all(i),i
 	enddo
 	close(20)
 c
@@ -287,6 +304,7 @@ CCC
       PARAMETER (NAT0=1200, N_DIM0=(9*NAT0*NAT0+3*NAT0)/2)
       Real*8  DD(N_DIM0)
       common /DIAG/ DD
+!$OMP THREADPRIVATE(/DIAG/)
 CCC
 
 !	do i=1,nx
@@ -730,6 +748,7 @@ c*Desk :Hessian Matrix :Begin!
 	real*8  ev_threshold,ev0(nat30),vec0(nat30*nat30)
 	real*8  hessian(ndim0)
 	common  /DIAG/  hessian
+!$OMP THREADPRIVATE(/DIAG/)
 	common  /MODE0/ ev0,vec0
 c
 	if(nca.gt.nat0) then
@@ -904,6 +923,9 @@ c*Desk :Hessian Matrix :Begin!
 	real*8    pessian(nat30*nat31),hv(nca3),lgpert
 	common  /MODE0/ ev0,vec0
 	common  /DIAG/  hessian
+!$OMP THREADPRIVATE(/DIAG/)
+	common  /PWORK/ pessian,col_id,h_id
+!$OMP THREADPRIVATE(/PWORK/)
 
         integer   i,j,k,l,i0,j0,i1,j1,k1,ki0,kj0,kh
 c

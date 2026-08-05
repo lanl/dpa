@@ -38,6 +38,12 @@ Calculate DPA values for surface points:
   perl ../src/ggdpa.pl -f pdb_list.txt
   perl ../src/ggdpa.pl -p <pdbid>
 
+  The per-surface-point sweep in ggsspnma (the Fortran binary ggdpa.pl
+  calls) is parallelized with OpenMP and uses all available cores by
+  default. Set OMP_NUM_THREADS to cap it:
+
+  OMP_NUM_THREADS=4 perl ../src/ggdpa.pl -p <pdbid>
+
 Basic Run:
   perl dpa.pl -p <pdbid> -topp 0.96 -cutoff 6 6
 
