@@ -56,12 +56,12 @@ if (-e "$home/structuredata/ligand_${pdbid}.pdb") {
     print $pmlf "hide everything,${pdbid}_het\n";
     print $pmlf "show spheres, ${pdbid}_het\n";
 }
-if (-e "$home/sscratch/${pdbid}_topdpacluster.pdb") {
+if (-e "$home/scratch/${pdbid}_topdpacluster.pdb") {
     print $pmlf "load $home/scratch/${pdbid}_topdpacluster.pdb,${pdbid}_topdpa\n";
     print $pmlf "hide everything,${pdbid}_topdpa\n";
     print $pmlf "show spheres, ${pdbid}_topdpa\n";
     print $pmlf "color magenta, ${pdbid}_topdpa\n";
-    print $pmlf "toggle everything, ${pdbid}_topdpa\n";
+    print $pmlf "disable ${pdbid}_topdpa\n";
 }
 if (-e "$home/scratch/${pdbid}_alldpa.pdb") {
     print $pmlf "load $home/scratch/${pdbid}_alldpa.pdb,${pdbid}_dpa\n";
@@ -69,7 +69,7 @@ if (-e "$home/scratch/${pdbid}_alldpa.pdb") {
     print $pmlf "show spheres, ${pdbid}_dpa\n";
     print $pmlf "spectrum b, rainbow, ${pdbid}_dpa\n";
     print $pmlf "set sphere_scale, 0.3, ${pdbid}_dpa\n";
-    print $pmlf "toggle everything, ${pdbid}_dpa\n";
+    print $pmlf "disable ${pdbid}_dpa\n";
 }
 
 if (-e "_ana.res3") {
