@@ -11,7 +11,7 @@ From the abstract of the 2008 paper:
 
 - Ming D, Wall ME. Quantifying allosteric effects in proteins. Proteins. 2005 Jun 1;59(4):697-707. doi: [10.1002/prot.20440](https://doi.org/10.1002/prot.20440). PMID: 15822100.
 
-- Ming D, Wall ME. Interactions in native binding sites cause a large change in protein dynamics. J Mol Biol. 2006 Apr 21;358(1):213-23. doi: [10.1016/j.jmb.2006.01.097](https://10.1016/j.jmb.2006.01.097). Epub 2006 Feb 14. PMID: 16513135.
+- Ming D, Wall ME. Interactions in native binding sites cause a large change in protein dynamics. J Mol Biol. 2006 Apr 21;358(1):213-23. doi: [10.1016/j.jmb.2006.01.097](https://doi.org/10.1016/j.jmb.2006.01.097). Epub 2006 Feb 14. PMID: 16513135.
 
 - Ming D, Cohn JD, Wall ME. Fast dynamics perturbation analysis for prediction of protein functional sites. BMC Struct Biol. 2008 Jan 30;8:5. doi: [10.1186/1472-6807-8-5](https://doi.org/10.1186/1472-6807-8-5). PMID: 18234095; PMCID: PMC2276503.
 
