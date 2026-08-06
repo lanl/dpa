@@ -9,17 +9,20 @@ From the abstract of the 2008 paper:
 
 ## Main publications:
 
-- Ming D, Wall ME. Quantifying allosteric effects in proteins. Proteins. 2005 Jun 1;59(4):697-707. doi: 10.1002/prot.20440. PMID: 15822100.
+- Ming D, Wall ME. Quantifying allosteric effects in proteins. Proteins. 2005 Jun 1;59(4):697-707. doi: [10.1002/prot.20440](https://doi.org/10.1002/prot.20440). PMID: 15822100.
 
-- Ming D, Wall ME. Interactions in native binding sites cause a large change in protein dynamics. J Mol Biol. 2006 Apr 21;358(1):213-23. doi: 10.1016/j.jmb.2006.01.097. Epub 2006 Feb 14. PMID: 16513135.
+- Ming D, Wall ME. Interactions in native binding sites cause a large change in protein dynamics. J Mol Biol. 2006 Apr 21;358(1):213-23. doi: [10.1016/j.jmb.2006.01.097](https://10.1016/j.jmb.2006.01.097). Epub 2006 Feb 14. PMID: 16513135.
 
-- Ming D, Cohn JD, Wall ME. Fast dynamics perturbation analysis for prediction of protein functional sites. BMC Struct Biol. 2008 Jan 30;8:5. doi: 10.1186/1472-6807-8-5. PMID: 18234095; PMCID: PMC2276503.
+- Ming D, Cohn JD, Wall ME. Fast dynamics perturbation analysis for prediction of protein functional sites. BMC Struct Biol. 2008 Jan 30;8:5. doi: [10.1186/1472-6807-8-5](https://doi.org/10.1186/1472-6807-8-5). PMID: 18234095; PMCID: PMC2276503.
 
 ## Related publications:
 
-- Ming D, Wall ME. Allostery in a coarse-grained model of protein dynamics. Phys Rev Lett. 2005 Nov 4;95(19):198103. doi: 10.1103/PhysRevLett.95.198103. Epub 2005 Nov 2. PMID: 16384030.
+- Ming D, Wall ME. Allostery in a coarse-grained model of protein dynamics. Phys Rev Lett. 2005 Nov 4;95(19):198103. doi: [https://doi.org/10.1103/PhysRevLett.95.198103](https://doi.org/10.1103/PhysRevLett.95.198103). Epub 2005 Nov 2. PMID: 16384030.
 
-- Verspoor KM, Cohn JD, Ravikumar KE, Wall ME. Text mining improves prediction of protein functional sites. PLoS One. 2012;7(2):e32171. doi: 10.1371/journal.pone.0032171. Epub 2012 Feb 29. PMID: 22393388; PMCID: PMC3290545.
+- Wall ME. Ligand Binding, Protein Fluctuations, and Allosteric Free Energy. arXiv:q-bio/0603027. doi: 
+[https://doi.org/10.48550/arXiv.q-bio/0603027](https://doi.org/10.48550/arXiv.q-bio/0603027)
+
+- Verspoor KM, Cohn JD, Ravikumar KE, Wall ME. Text mining improves prediction of protein functional sites. PLoS One. 2012;7(2):e32171. doi: [https://doi.org/10.1371/journal.pone.0032171](https://doi.org/10.1371/journal.pone.0032171). Epub 2012 Feb 29. PMID: 22393388; PMCID: PMC3290545.
 
 ## Usage
 
