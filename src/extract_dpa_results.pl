@@ -24,7 +24,12 @@ sub sort_chain_resid {
     } @_;
 }
 
-my @dpa_site_colors = ('orange', 'yellow', 'pink');
+my @dpa_site_colors = (
+    'orange', 'yellow', 'pink', 'cyan', 'salmon',
+    'lime', 'purple', 'skyblue', 'gold', 'violet',
+    'palegreen', 'hotpink', 'lightsalmon', 'lightblue', 'wheat',
+    'lightcyan', 'plum', 'khaki', 'lightcoral', 'aquamarine'
+);
 
 sub pymol_resi_selection {
     my %by_chain;
